@@ -14,20 +14,27 @@ import tushare  # for china market
 import yahoo_finance  # for global market
 
 
-class stock_price_data_collection_function():
+class SPD_collection_function():
 
-    def __init__():
+    def __init__(self, stock_list):
+        self.stock_list = stock_list
+        self.stock_price_dict = {}
 
-    def download_daily_data(stock_list):
-        for stock in stock_list:
-            locals()['%s' % stock] = yahoo_finance.Share('%s' % stock)
-            locals()['%s_df' % stock] = pd.DataFrame(locals()['%s' %
-                                                              stock].get_historical("1989-01-01", "2017-03-01"))
+    def download_daily_data(self, output_tocsv=False):
+        for stock in self.stock_list:
+
+            locals()['%s_df' % stock] = pd.DataFrame(yahoo_finance.Share(
+                '%s' % stock).get_historical("1989-01-01", "2017-03-01"))
             locals()['%s_df' % stock] = locals()['%s_df' % stock].iloc[::-1]
-            locals()['%s_df' % stock].to_csv(
-                "%s_stock_data.csv" % stock, index=False)
+            if output_tocsv == True:
+                locals()['%s_df' % stock].to_csv(
+                    "%s_stock_data.csv" % stock, index=False)
+            self.stock_price_dict['%s' % stock] = locals()['%s_df' % stock]
+
+
 if __name__ == '__main__':
     stock_list = ['IBM', 'AAPL', 'GOOG', 'MSFT']
+    SPD_collection_function(stock_list).download_daily_data()
 
     # print IBM.get_open()
 
