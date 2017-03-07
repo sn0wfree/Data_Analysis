@@ -14,17 +14,17 @@ import tushare  # for china market
 import yahoo_finance  # for global market
 
 
-class SPD_collection_function():
+class SPDCollectionFunction():
 
     def __init__(self, stock_list):
         self.stock_list = stock_list
         self.stock_price_dict = {}
 
-    def download_daily_data(self, output_tocsv=False):
+    def DownloadDailyData(self, Startdate="1989-01-01", Enddate="2017-03-01", output_tocsv=False):
         for stock in self.stock_list:
 
             locals()['%s_df' % stock] = pd.DataFrame(yahoo_finance.Share(
-                '%s' % stock).get_historical("1989-01-01", "2017-03-01"))
+                '%s' % stock).get_historical(Startdate, Enddate))
             locals()['%s_df' % stock] = locals()['%s_df' % stock].iloc[::-1]
             if output_tocsv == True:
                 locals()['%s_df' % stock].to_csv(
@@ -32,9 +32,12 @@ class SPD_collection_function():
             self.stock_price_dict['%s' % stock] = locals()['%s_df' % stock]
 
 
+def ReadStockList():
+
+
 if __name__ == '__main__':
     stock_list = ['IBM', 'AAPL', 'GOOG', 'MSFT']
-    SPD_collection_function(stock_list).download_daily_data()
+    SPDCollectionFunction(stock_list).DownloadDailyData()
 
     # print IBM.get_open()
 
