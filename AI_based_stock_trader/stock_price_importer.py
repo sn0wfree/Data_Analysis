@@ -16,11 +16,15 @@ import yahoo_finance  # for global market
 
 class SPDCollectionFunction():
 
-    def __init__(self, stock_list):
+    def __init__(self, stock_list, Startdate, Enddate):
         self.stock_list = stock_list
         self.stock_price_dict = {}
+        self.Startdate = Startdate
+        self.Enddate = Enddate
 
-    def DownloadDailyData(self, Startdate="1989-01-01", Enddate="2017-03-01", output_tocsv=False):
+    def DownloadDailyData(self, Startdate=self.Startdate, Enddate=self.Enddate, output_tocsv=False):
+        Startdate = self.DateFind(Startdate)
+        Enddate = self.DateFind(Enddate)
         for stock in self.stock_list:
 
             locals()['%s_df' % stock] = pd.DataFrame(yahoo_finance.Share(
@@ -35,8 +39,14 @@ class SPDCollectionFunction():
                 pass
             # else
 
-    def ShowDailyData(self, Startdate="1989-01-01", Enddate="2017-03-01"):
+    def ShowDailyData(self, Startdate=self.Startdate, Enddate=self.Enddate):
+
         pass
+
+    def DateFind(self, date):
+        if isinstance(date, str):
+            if '-' in date:
+                date_list = date.split('-')
 
 
 def ReadStockList(path_stock_list):
