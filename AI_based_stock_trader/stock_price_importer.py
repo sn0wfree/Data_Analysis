@@ -10,6 +10,7 @@ This function is a test for a simply ai trader
 #-------------------------
 import pandas as pd
 import os
+import datetime
 import tushare  # for china market
 import yahoo_finance  # for global market
 
@@ -22,9 +23,18 @@ class SPDCollectionFunction():
         self.Startdate = Startdate
         self.Enddate = Enddate
 
-    def DownloadDailyData(self, Startdate=self.Startdate, Enddate=self.Enddate, output_tocsv=False):
-        Startdate = self.DateFind(Startdate)
-        Enddate = self.DateFind(Enddate)
+    def DownloadDailyData(self, output_tocsv=False):
+        if self.DateFind(self.Startdate) != 'default':
+            Startdate = self.DateFind(self.Startdate)
+        else:
+            Startdate = '2000-01-01'
+        if self.DateFind(self.Enddate) != 'deafult':
+
+            Enddate = self.DateFind(self.Enddate)
+        else:
+            Enddate = datetime.date.today().strftime('%y-%m-%d')
+        # print Startdate, Enddate
+
         for stock in self.stock_list:
 
             locals()['%s_df' % stock] = pd.DataFrame(yahoo_finance.Share(
@@ -36,17 +46,39 @@ class SPDCollectionFunction():
                     "%s_stock_data.csv" % stock, index=False)
                 print '%s download completed' % stock
             else:
-                pass
-            # else
 
-    def ShowDailyData(self, Startdate=self.Startdate, Enddate=self.Enddate):
+        return self.stock_price_dict
 
+        # else
+
+    def ShowDailyData(self):
+        if self.DateFind(self.Startdate) != 'default':
+            Startdate = self.DateFind(self.Startdate)
+        else:
+            Startdate = '2000-01-01'
+        if self.DateFind(self.Enddate) != 'deafult':
+
+            Enddate = self.DateFind(self.Enddate)
+        else:
+            Enddate = datetime.date.today().strftime('%y-%m-%d')
         pass
 
     def DateFind(self, date):
         if isinstance(date, str):
             if '-' in date:
-                date_list = date.split('-')
+
+                date_output = date
+
+            else:
+                date_output = 'default'
+
+        elif isinstance(date, int):
+            date = str(date)
+            if len(date) >= 8 and ' ' not in date:
+                date_output = datetime.datetime.strptime(date, '%y-%m-%d')
+            else:
+                date_output = 'default'
+        return date_output
 
 
 def ReadStockList(path_stock_list):
@@ -73,7 +105,12 @@ def ReadStockList(path_stock_list):
 if __name__ == '__main__':
     #stock_list = ['IBM', 'AAPL', 'GOOG', 'MSFT']
     stock_list = ReadStockList('stocklist.txt')
-    SPDCollectionFunction(stock_list).DownloadDailyData()
+    # for stock in stock_list[0]:
+    if stock_list != []:
+        #stock = stock_list[1]
+        print stock
+        history_Date_list = SPDCollectionFunction(stock, '2003-01-01',
+                                                  '2017-03-06').DownloadDailyData()
 
     # print IBM.get_open()
 
