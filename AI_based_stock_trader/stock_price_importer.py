@@ -36,7 +36,6 @@ class SPDCollectionFunction():
         # print Startdate, Enddate
 
         for stock in self.stock_list:
-
             locals()['%s_df' % stock] = pd.DataFrame(yahoo_finance.Share(
                 '%s' % stock).get_historical(Startdate, Enddate))
             locals()['%s_df' % stock] = locals()['%s_df' % stock].iloc[::-1]
@@ -46,10 +45,8 @@ class SPDCollectionFunction():
                     "%s_stock_data.csv" % stock, index=False)
                 print '%s download completed' % stock
             else:
-
+                pass
         return self.stock_price_dict
-
-        # else
 
     def ShowDailyData(self):
         if self.DateFind(self.Startdate) != 'default':
